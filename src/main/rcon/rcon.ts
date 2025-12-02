@@ -121,7 +121,7 @@ export class Rcon extends EventEmitter {
         break
       }
       default: {
-        console.log({ size, type, jsonData })
+        console.log({ size, type: Packet.Event[type], jsonData })
       }
     }
   }
