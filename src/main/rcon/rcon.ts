@@ -1,12 +1,8 @@
 import EventEmitter from 'node:events'
 import { Socket, createConnection } from 'node:net'
 import { Packet } from './types/packet'
-
-const host = '127.0.0.1'
-const port = 42070
-const password = 'admin'
-
 import { EventStringTransformer } from './events.str'
+import { DEFAULTS } from './defaults'
 
 export class Rcon extends EventEmitter {
   private host: string
@@ -16,9 +12,10 @@ export class Rcon extends EventEmitter {
 
   constructor() {
     super()
-    this.host = host
-    this.port = port
-    this.password = password
+
+    this.host = DEFAULTS.HOST
+    this.port = DEFAULTS.PORT
+    this.password = DEFAULTS.PASSWORD
 
     EventEmitter.call(this)
   }
