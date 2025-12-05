@@ -14,8 +14,7 @@ function App(): React.JSX.Element {
   const [port, setPort] = useInputState<string | number>(42070)
   const [pwd, setPwd] = useInputState('admin')
 
-  const rconConnect = (): void =>
-    window.electron.ipcRenderer.send('rcon_connect', { host, port, password: pwd })
+  const rconConnect = (): void => window.api.rconConnect(host, Number(port), pwd)
 
   return (
     <AppShell padding="md">

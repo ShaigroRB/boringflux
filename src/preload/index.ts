@@ -1,8 +1,17 @@
 import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
+export type IpcRendererAPI = {
+  rconConnect: (host: string, port: number, password: string) => void
+  rconListenToEvents: () => any
+}
+
 // Custom APIs for renderer
-const api = {}
+const api: IpcRendererAPI = {
+  rconConnect: (host: string, port: number, password: string) =>
+    electronAPI.ipcRenderer.send('rcon_connect', { host, port, password }),
+  rconListenToEvents: () => 'toto'
+}
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
