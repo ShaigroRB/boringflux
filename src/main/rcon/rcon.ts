@@ -6,15 +6,11 @@ const host = '127.0.0.1'
 const port = 42070
 const password = 'admin'
 
-// who cares
-const rconId = 0x0012d4a8
 
 export class Rcon extends EventEmitter {
   private host: string
   private port: number
   private password: string
-  private rconId: number
-  private hasAuthed: boolean
   private _tcpSocket!: Socket
 
   constructor() {
@@ -22,8 +18,6 @@ export class Rcon extends EventEmitter {
     this.host = host
     this.port = port
     this.password = password
-    this.rconId = rconId
-    this.hasAuthed = false
 
     EventEmitter.call(this)
   }
@@ -110,7 +104,6 @@ export class Rcon extends EventEmitter {
     const type = data.readInt16LE(DELIMITER_BYTES + SIZE_BYTES)
     const jsonData = data.toString('utf8', DELIMITER_BYTES + SIZE_BYTES + TYPE_BYTES, size + 4)
 
-    console.log(Packet.Event.RCON_LOGGED_IN)
     switch (type) {
       case Packet.Event.RCON_LOGGED_IN: {
         console.log('WOOOOOOOHOOOOO! We logged in!')
@@ -133,6 +126,5 @@ export class Rcon extends EventEmitter {
 
   public socketOnEnd = (): void => {
     this.emit('end')
-    this.hasAuthed = false
   }
 }
