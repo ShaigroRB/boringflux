@@ -6,6 +6,7 @@ const host = '127.0.0.1'
 const port = 42070
 const password = 'admin'
 
+import { EventStringTransformer } from './events.str'
 
 export class Rcon extends EventEmitter {
   private host: string
@@ -104,9 +105,12 @@ export class Rcon extends EventEmitter {
     const type = data.readInt16LE(DELIMITER_BYTES + SIZE_BYTES)
     const jsonData = data.toString('utf8', DELIMITER_BYTES + SIZE_BYTES + TYPE_BYTES, size + 4)
 
+    const json = EventStringTransformer.formatEvent(jsonData)
+
     switch (type) {
       case Packet.Event.RCON_LOGGED_IN: {
         console.log('WOOOOOOOHOOOOO! We logged in!')
+        console.log('To avoid too much verbose, ping events are hidden.')
         break
       }
       case Packet.Event.RCON_PING: {
@@ -114,7 +118,7 @@ export class Rcon extends EventEmitter {
         break
       }
       default: {
-        console.log({ size, type: Packet.Event[type], jsonData })
+        console.log({ size, type: Packet.Event[type], json })
       }
     }
   }
