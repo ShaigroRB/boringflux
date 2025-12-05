@@ -3,6 +3,9 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { Rcon } from './rcon/rcon'
+import { DEFAULTS } from './rcon/defaults'
+
+const rcon = new Rcon()
 
 function createWindow(): void {
   // Create the browser window.
@@ -50,12 +53,16 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.on('ping', () => {
-    console.log('pong')
-    const rcon = new Rcon()
-    rcon.connect()
-  })
+  /**
+   * Establish rcon connection.
+   * Host, port, password are passed
+   */
+  ipcMain.on(
+    'rcon_connect',
+    (_, { host = DEFAULTS.HOST, port = DEFAULTS.PORT, password = DEFAULTS.PASSWORD }) => {
+      rcon.connect(host, port, password)
+    }
+  )
 
   createWindow()
 

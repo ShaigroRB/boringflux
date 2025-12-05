@@ -53,7 +53,11 @@ export class Rcon extends EventEmitter {
     }
   }
 
-  public connect = (): void => {
+  public connect = (host: string, port: number, pwd: string): void => {
+    this.host = host
+    this.port = port
+    this.password = pwd
+
     this._tcpSocket = createConnection(this.port, this.host)
     this._tcpSocket
       .on('data', (data) => {
