@@ -1,6 +1,6 @@
 import EventEmitter from 'node:events'
 import { Socket, createConnection } from 'node:net'
-import { Packet } from './packet'
+import { Packet } from './types/packet'
 
 const host = '127.0.0.1'
 const port = 42070
