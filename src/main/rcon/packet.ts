@@ -1,4 +1,4 @@
-enum Request {
+export enum Request {
   LOGIN = 0,
   PING = 1,
   COMMAND = 2,
@@ -14,7 +14,7 @@ enum Request {
  * In the docs, it's always called as event, event id or event type.
  * To be coherent, I'll use "Event" for the naming too.
  */
-enum Event {
+export enum Event {
   SERVER_STARTUP = 0,
   SERVER_SHUTDOWN = 1,
   LOBBY_CONNECT = 2,
@@ -80,10 +80,14 @@ enum Event {
   PLAYER_LOADOUT = 62,
   SURVIVAL_BOMB_DEFUSED = 63,
   SURVIVAL_BOMB_EXPLODED = 64,
-  SURVIVAL_BOMB_REARMED = 65
+  SURVIVAL_BOMB_REARMED = 65,
+  SLEEP = 66,
+  WAKE = 67
 }
 
 export const Packet = {
   Request,
   Event
 }
+
+export type EventType = keyof typeof Event
