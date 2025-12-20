@@ -886,8 +886,6 @@ export type Events =
 
 /**
  * To be used to transform any JSON in packets into typed events with all of their properties.
- *
- * TODO: extract the types to be shared with the renderer part
  */
 export class EventStringTransformer {
   public static formatEvent = (eventStr: string): Events => {

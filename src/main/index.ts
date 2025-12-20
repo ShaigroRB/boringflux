@@ -2,8 +2,9 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { Rcon } from './rcon/rcon'
-import { DEFAULTS } from './rcon/defaults'
+import { Rcon } from './rcon'
+
+import { DEFAULTS, EmittedRconEvent, Events } from '@shared/rcon'
 
 const rcon = new Rcon()
 
@@ -58,7 +59,7 @@ app.whenReady().then(() => {
    * Host, port, password are passed
    */
   ipcMain.on(
-    'rcon_connect',
+    EmittedRconEvent.CONNECT,
     (_, { host = DEFAULTS.HOST, port = DEFAULTS.PORT, password = DEFAULTS.PASSWORD }) => {
       rcon.connect(host, port, password)
     }

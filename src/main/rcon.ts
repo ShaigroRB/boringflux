@@ -1,8 +1,6 @@
 import EventEmitter from 'node:events'
 import { Socket, createConnection } from 'node:net'
-import { Packet } from './types/packet'
-import { EventStringTransformer } from './events.str'
-import { DEFAULTS } from './defaults'
+import { Packet, EventStringTransformer, DEFAULTS } from '@shared/rcon'
 
 export class Rcon extends EventEmitter {
   private host: string

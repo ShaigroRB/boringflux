@@ -1,5 +1,6 @@
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { EmittedRconEvent } from '@shared/rcon'
 
 export type IpcRendererAPI = {
   rconConnect: (host: string, port: number, password: string) => void
@@ -9,8 +10,8 @@ export type IpcRendererAPI = {
 // Custom APIs for renderer
 const api: IpcRendererAPI = {
   rconConnect: (host: string, port: number, password: string) =>
-    electronAPI.ipcRenderer.send('rcon_connect', { host, port, password }),
   rconListenToEvents: () => 'toto'
+    ipcRenderer.send(EmittedRconEvent.CONNECT, { host, port, password }),
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
