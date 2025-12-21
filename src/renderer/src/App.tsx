@@ -7,17 +7,31 @@ import {
   PasswordInput,
   Stack
 } from '@mantine/core'
-import { useInputState } from '@mantine/hooks'
+import { useInputState, useListState } from '@mantine/hooks'
+import { EmittedRconEvent, Event as RconEvent } from '@shared/rcon'
+import { DataTable } from 'mantine-datatable'
+import { useEffect } from 'react'
 
 function App(): React.JSX.Element {
   const [host, setHost] = useInputState('127.0.0.1')
   const [port, setPort] = useInputState<string | number>(42070)
   const [pwd, setPwd] = useInputState('admin')
+  const [events, eventsHandlers] = useListState<{ EventID: string; Time: string; id: string }>([])
 
   const rconConnect = (): void => window.api.rconConnect(host, Number(port), pwd)
 
+  useEffect(() => {
+    window.electron.ipcRenderer.on(EmittedRconEvent.NEW_RECEIVED_EVENT, (_, allEvents) => {
+      eventsHandlers.setState(allEvents.toReversed())
+    })
+
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners(EmittedRconEvent.NEW_RECEIVED_EVENT)
+    }
+  })
+
   return (
-    <AppShell padding="md">
+    <AppShell padding="md" navbar={{ width: 300, breakpoint: 'xs' }}>
       <AppShell.Navbar>
         <Container>
           <Stack>
@@ -31,7 +45,26 @@ function App(): React.JSX.Element {
           </Stack>
         </Container>
       </AppShell.Navbar>
-      <AppShell.Main>{/* table of events */}</AppShell.Main>
+      <AppShell.Main>
+        <DataTable
+          withColumnBorders
+          highlightOnHover
+          columns={[
+            {
+              accessor: 'id',
+              hidden: true
+            },
+            {
+              accessor: 'EventID',
+              title: 'Event',
+              width: 200,
+              render: (record) => <>{RconEvent[record.EventID]}</>
+            },
+            { accessor: 'Time' }
+          ]}
+          records={events}
+        />
+      </AppShell.Main>
     </AppShell>
   )
 }

@@ -7,6 +7,7 @@ import { Rcon } from './rcon'
 import { DEFAULTS, EmittedRconEvent, Events } from '@shared/rcon'
 
 const rcon = new Rcon()
+const allEvents: Events[] = []
 
 function createWindow(): void {
   // Create the browser window.
@@ -20,6 +21,11 @@ function createWindow(): void {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }
+  })
+
+  rcon.on(EmittedRconEvent.NEW_RECEIVED_EVENT, (json: Events) => {
+    allEvents.push(json)
+    mainWindow.webContents.send(EmittedRconEvent.NEW_RECEIVED_EVENT, allEvents)
   })
 
   mainWindow.on('ready-to-show', () => {

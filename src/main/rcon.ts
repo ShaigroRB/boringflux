@@ -1,6 +1,6 @@
 import EventEmitter from 'node:events'
 import { Socket, createConnection } from 'node:net'
-import { Packet, EventStringTransformer, DEFAULTS } from '@shared/rcon'
+import { Packet, EventStringTransformer, DEFAULTS, EmittedRconEvent } from '@shared/rcon'
 
 export class Rcon extends EventEmitter {
   private host: string
@@ -118,6 +118,7 @@ export class Rcon extends EventEmitter {
       }
       default: {
         console.log({ size, type: Packet.Event[type], json })
+        this.emit(EmittedRconEvent.NEW_RECEIVED_EVENT, json)
       }
     }
   }
