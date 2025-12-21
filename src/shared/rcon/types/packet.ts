@@ -89,5 +89,3 @@ export const Packet = {
   Request,
   Event
 }
-
-export type EventType = keyof typeof Event

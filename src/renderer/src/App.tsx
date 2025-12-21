@@ -9,7 +9,7 @@ import {
   Stack
 } from '@mantine/core'
 import { useInputState, useListState } from '@mantine/hooks'
-import { EmittedRconEvent, Event as RconEvent } from '@shared/rcon'
+import { EmittedRconEvent, Packet } from '@shared/rcon'
 import { IconChevronDown, IconChevronUp, IconInfoCircle } from '@tabler/icons-react'
 import { DataTable } from 'mantine-datatable'
 import { useEffect, useState } from 'react'
@@ -80,7 +80,7 @@ function App(): React.JSX.Element {
               accessor: 'EventID',
               title: 'Event',
               width: 200,
-              render: (record) => <>{RconEvent[record.EventID]}</>
+              render: (record) => <>{Packet.Event[record.EventID]}</>
             },
             { accessor: 'Time' }
           ]}
