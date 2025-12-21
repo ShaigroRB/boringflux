@@ -4,14 +4,12 @@ import { EmittedRconEvent } from '@shared/rcon'
 
 export type IpcRendererAPI = {
   rconConnect: (host: string, port: number, password: string) => void
-  rconListenToEvents: () => any
 }
 
 // Custom APIs for renderer
 const api: IpcRendererAPI = {
   rconConnect: (host: string, port: number, password: string) =>
-  rconListenToEvents: () => 'toto'
-    ipcRenderer.send(EmittedRconEvent.CONNECT, { host, port, password }),
+    ipcRenderer.send(EmittedRconEvent.CONNECT, { host, port, password })
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
