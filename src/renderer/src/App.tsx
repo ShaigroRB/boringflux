@@ -23,6 +23,8 @@ function App(): React.JSX.Element {
   const [events, eventsHandlers] = useListState<{ EventID: string; Time: string; id: string }>([])
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({})
 
+  const isConnected = events.length > 1
+
   const isRowExpanded = (id: string) => expandedRows[id] ?? false
 
   const toggleRowExpansion = (rowId: string) => {
@@ -48,12 +50,19 @@ function App(): React.JSX.Element {
         <Container>
           <Stack>
             <h2>RCON connection</h2>
-            <Input.Wrapper label="Host">
-              <Input value={host} onChange={setHost} />
-            </Input.Wrapper>
-            <NumberInput label="Port" value={port} onChange={setPort} max={65535} min={0} />
-            <PasswordInput label="Password" value={pwd} onChange={setPwd} />
-            <Button onClick={rconConnect}>Connect</Button>
+            {!isConnected && (
+              <>
+                <Input.Wrapper label="Host">
+                  <Input value={host} onChange={setHost} />
+                </Input.Wrapper>
+                <NumberInput label="Port" value={port} onChange={setPort} max={65535} min={0} />
+                <PasswordInput label="Password" value={pwd} onChange={setPwd} />
+              </>
+            )}
+            <Button disabled={isConnected} onClick={rconConnect}>
+              {isConnected ? 'Connected' : 'Connect'}
+            </Button>
+            {isConnected && <>Disconnection is automatic when tool is closed.</>}
           </Stack>
         </Container>
       </AppShell.Navbar>
