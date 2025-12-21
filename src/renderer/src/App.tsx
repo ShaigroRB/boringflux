@@ -2,7 +2,10 @@ import {
   AppShell,
   Button,
   Container,
+  Divider,
   Input,
+  Kbd,
+  NavLink,
   NumberInput,
   PasswordInput,
   Stack
@@ -11,6 +14,7 @@ import { useInputState, useListState } from '@mantine/hooks'
 import { EmittedRconEvent } from '@shared/rcon'
 import { useEffect } from 'react'
 import { EventsTable } from './EventsTable'
+import { IconBlocks, IconHome2, IconTerminal2 } from '@tabler/icons-react'
 
 function App(): React.JSX.Element {
   const [host, setHost] = useInputState('127.0.0.1')
@@ -33,24 +37,51 @@ function App(): React.JSX.Element {
   const rconConnect = (): void => window.api.rconConnect(host, Number(port), pwd)
 
   return (
-    <AppShell padding="md" navbar={{ width: 300, breakpoint: 'xs' }}>
+    <AppShell padding="md" navbar={{ width: 340, breakpoint: 'xs' }}>
       <AppShell.Navbar>
         <Container>
           <Stack>
-            <h2>RCON connection</h2>
-            {!isConnected && (
-              <>
-                <Input.Wrapper label="Host">
-                  <Input value={host} onChange={setHost} />
-                </Input.Wrapper>
-                <NumberInput label="Port" value={port} onChange={setPort} max={65535} min={0} />
-                <PasswordInput label="Password" value={pwd} onChange={setPwd} />
-              </>
-            )}
-            <Button disabled={isConnected} onClick={rconConnect}>
-              {isConnected ? 'Connected' : 'Connect'}
-            </Button>
-            {isConnected && <>Disconnection is automatic when tool is closed.</>}
+            <Stack>
+              <h2>RCON connection</h2>
+              {!isConnected && (
+                <>
+                  <Input.Wrapper label="Host">
+                    <Input value={host} onChange={setHost} />
+                  </Input.Wrapper>
+                  <NumberInput label="Port" value={port} onChange={setPort} max={65535} min={0} />
+                  <PasswordInput label="Password" value={pwd} onChange={setPwd} />
+                </>
+              )}
+              <Button disabled={isConnected} onClick={rconConnect}>
+                {isConnected ? 'Connected' : 'Connect'}
+              </Button>
+              {isConnected && <>Disconnection is automatic when tool is closed.</>}
+            </Stack>
+
+            <Divider />
+
+            <NavLink
+              href="#required-for-focus"
+              label="Server events"
+              active
+              leftSection={<IconHome2 size={16} stroke={1.5} />}
+              rightSection={<Kbd>V</Kbd>}
+            />
+            <NavLink
+              disabled
+              href="#required-for-focus"
+              label="Send a command"
+              leftSection={<IconTerminal2 size={16} stroke={1.5} />}
+              rightSection={<Kbd>B</Kbd>}
+            />
+            <NavLink
+              disabled
+              href="#required-for-focus"
+              label="Custom commands"
+              leftSection={<IconBlocks size={16} stroke={1.5} />}
+              rightSection={<Kbd>N</Kbd>}
+              description="Create commands triggered by events"
+            />
           </Stack>
         </Container>
       </AppShell.Navbar>
