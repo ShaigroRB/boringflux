@@ -1,4 +1,5 @@
 import {
+  Alert,
   AppShell,
   Button,
   Container,
@@ -9,14 +10,25 @@ import {
 } from '@mantine/core'
 import { useInputState, useListState } from '@mantine/hooks'
 import { EmittedRconEvent, Event as RconEvent } from '@shared/rcon'
+import { IconChevronDown, IconChevronUp, IconInfoCircle } from '@tabler/icons-react'
 import { DataTable } from 'mantine-datatable'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+
+const IconInfo = <IconInfoCircle />
 
 function App(): React.JSX.Element {
   const [host, setHost] = useInputState('127.0.0.1')
   const [port, setPort] = useInputState<string | number>(42070)
   const [pwd, setPwd] = useInputState('admin')
   const [events, eventsHandlers] = useListState<{ EventID: string; Time: string; id: string }>([])
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({})
+
+  const isRowExpanded = (id: string) => expandedRows[id] ?? false
+
+  const toggleRowExpansion = (rowId: string) => {
+    const isExpanded = isRowExpanded(rowId)
+    setExpandedRows((current) => ({ ...current, [rowId]: !isExpanded }))
+  }
 
   const rconConnect = (): void => window.api.rconConnect(host, Number(port), pwd)
 
@@ -46,13 +58,23 @@ function App(): React.JSX.Element {
         </Container>
       </AppShell.Navbar>
       <AppShell.Main>
+        <Alert
+          w="fit-content"
+          variant="light"
+          color="blue"
+          title="Rows can be expanded to see all details of an event."
+          icon={IconInfo}
+        />
         <DataTable
           withColumnBorders
           highlightOnHover
           columns={[
             {
               accessor: 'id',
-              hidden: true
+              title: '#',
+              width: 50,
+              render: (record) =>
+                isRowExpanded(record.id) ? <IconChevronUp /> : <IconChevronDown />
             },
             {
               accessor: 'EventID',
@@ -63,6 +85,11 @@ function App(): React.JSX.Element {
             { accessor: 'Time' }
           ]}
           records={events}
+          onRowClick={({ record }) => toggleRowExpansion(record.id)}
+          rowExpansion={{
+            allowMultiple: true,
+            content: ({ record }) => <>{JSON.stringify(record, null, 2)}</>
+          }}
         />
       </AppShell.Main>
     </AppShell>
