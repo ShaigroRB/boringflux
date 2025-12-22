@@ -14,6 +14,7 @@ import { useInputState, useListState } from '@mantine/hooks'
 import { EmittedRconEvent } from '@shared/rcon'
 import { useEffect } from 'react'
 import { EventsTable } from './EventsTable'
+import { Link, Route, useLocation } from 'wouter'
 import { IconBlocks, IconHome2, IconTerminal2 } from '@tabler/icons-react'
 
 function App(): React.JSX.Element {
@@ -21,6 +22,7 @@ function App(): React.JSX.Element {
   const [port, setPort] = useInputState<string | number>(42070)
   const [pwd, setPwd] = useInputState('admin')
   const [events, eventsHandlers] = useListState<{ EventID: string; Time: string; id: string }>([])
+  const [location] = useLocation()
 
   useEffect(() => {
     window.electron.ipcRenderer.on(EmittedRconEvent.NEW_RECEIVED_EVENT, (_, allEvents) => {
@@ -61,23 +63,26 @@ function App(): React.JSX.Element {
             <Divider />
 
             <NavLink
-              href="#required-for-focus"
+              component={Link}
+              href="/"
               label="Server events"
-              active
+              active={location === '/'}
               leftSection={<IconHome2 size={16} stroke={1.5} />}
               rightSection={<Kbd>V</Kbd>}
             />
             <NavLink
-              disabled
-              href="#required-for-focus"
+              component={Link}
+              href="/console"
               label="Send a command"
+              active={location === '/console'}
               leftSection={<IconTerminal2 size={16} stroke={1.5} />}
               rightSection={<Kbd>B</Kbd>}
             />
             <NavLink
-              disabled
-              href="#required-for-focus"
+              component={Link}
+              href="/custom-commands"
               label="Custom commands"
+              active={location === '/custom-commands'}
               leftSection={<IconBlocks size={16} stroke={1.5} />}
               rightSection={<Kbd>N</Kbd>}
               description="Create commands triggered by events"
@@ -86,7 +91,11 @@ function App(): React.JSX.Element {
         </Container>
       </AppShell.Navbar>
       <AppShell.Main>
-        <EventsTable events={events} />
+        <Route path="/">
+          <EventsTable events={events} />
+        </Route>
+        <Route path="/console">send command</Route>
+        <Route path="/custom-commands">custom commands</Route>
       </AppShell.Main>
     </AppShell>
   )
