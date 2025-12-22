@@ -5,9 +5,11 @@ import icon from '../../resources/icon.png?asset'
 import { Rcon } from './rcon'
 
 import { DEFAULTS, EmittedRconEvent, Events } from '@shared/rcon'
+import { MOCK_EVENTS } from './json'
 
-const rcon = new Rcon()
-const allEvents: Events[] = []
+const isMock = true
+const rcon = new Rcon({ isMock })
+const allEvents: Events[] = MOCK_EVENTS as Events[]
 
 function createWindow(): void {
   // Create the browser window.
@@ -24,7 +26,9 @@ function createWindow(): void {
   })
 
   rcon.on(EmittedRconEvent.NEW_RECEIVED_EVENT, (json: Events) => {
-    allEvents.push(json)
+    if (!isMock) {
+      allEvents.push(json)
+    }
     mainWindow.webContents.send(EmittedRconEvent.NEW_RECEIVED_EVENT, allEvents)
   })
 

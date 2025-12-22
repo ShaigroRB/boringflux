@@ -7,13 +7,15 @@ export class Rcon extends EventEmitter {
   private port: number
   private password: string
   private _tcpSocket!: Socket
+  private isMock: boolean
 
-  constructor() {
+  constructor({ isMock = false }) {
     super()
 
     this.host = DEFAULTS.HOST
     this.port = DEFAULTS.PORT
     this.password = DEFAULTS.PASSWORD
+    this.isMock = isMock
 
     EventEmitter.call(this)
   }
@@ -55,6 +57,12 @@ export class Rcon extends EventEmitter {
     this.host = host
     this.port = port
     this.password = pwd
+
+    if (this.isMock) {
+      this.emit(EmittedRconEvent.CONNECT)
+      this.emit(EmittedRconEvent.NEW_RECEIVED_EVENT, 'nothing')
+      return
+    }
 
     this._tcpSocket = createConnection(this.port, this.host)
     this._tcpSocket
