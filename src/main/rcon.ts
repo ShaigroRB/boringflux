@@ -1,6 +1,7 @@
 import EventEmitter from 'node:events'
 import { Socket, createConnection } from 'node:net'
-import { Packet, EventStringTransformer, DEFAULTS, EmittedRconEvent } from '@shared/rcon'
+import { Packet, EventStringTransformer, DEFAULTS } from '@shared/rcon'
+import { EMITTED_EVENTS } from '@shared/events'
 
 export class Rcon extends EventEmitter {
   private host: string
@@ -59,8 +60,8 @@ export class Rcon extends EventEmitter {
     this.password = pwd
 
     if (this.isMock) {
-      this.emit(EmittedRconEvent.CONNECT)
-      this.emit(EmittedRconEvent.NEW_RECEIVED_EVENT, 'nothing')
+      this.emit(EMITTED_EVENTS.rcon.CONNECT)
+      this.emit(EMITTED_EVENTS.rcon.NEW_EVENT, 'nothing')
       return
     }
 
@@ -126,7 +127,7 @@ export class Rcon extends EventEmitter {
       }
       default: {
         console.log({ size, type: Packet.EventType[type], json })
-        this.emit(EmittedRconEvent.NEW_RECEIVED_EVENT, json)
+        this.emit(EMITTED_EVENTS.rcon.NEW_EVENT, json)
       }
     }
   }

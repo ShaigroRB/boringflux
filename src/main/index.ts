@@ -4,7 +4,8 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { Rcon } from './rcon'
 
-import { DEFAULTS, EmittedRconEvent, RconEvent } from '@shared/rcon'
+import { DEFAULTS, RconEvent } from '@shared/rcon'
+import { EMITTED_EVENTS } from '@shared/events'
 import { MOCK_EVENTS } from './json'
 
 const isMock = true
@@ -25,11 +26,11 @@ function createWindow(): void {
     }
   })
 
-  rcon.on(EmittedRconEvent.NEW_RECEIVED_EVENT, (json: RconEvent) => {
+  rcon.on(EMITTED_EVENTS.rcon.NEW_EVENT, (json: RconEvent) => {
     if (!isMock) {
       allEvents.push(json)
     }
-    mainWindow.webContents.send(EmittedRconEvent.NEW_RECEIVED_EVENT, allEvents)
+    mainWindow.webContents.send(EMITTED_EVENTS.main.UPDATE_ALL_EVENTS, allEvents)
   })
 
   mainWindow.on('ready-to-show', () => {
@@ -69,7 +70,7 @@ app.whenReady().then(() => {
    * Host, port, password are passed
    */
   ipcMain.on(
-    EmittedRconEvent.CONNECT,
+    EMITTED_EVENTS.renderer.CONNECT,
     (_, { host = DEFAULTS.HOST, port = DEFAULTS.PORT, password = DEFAULTS.PASSWORD }) => {
       rcon.connect(host, port, password)
     }

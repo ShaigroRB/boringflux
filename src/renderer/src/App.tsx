@@ -11,7 +11,8 @@ import {
   Stack
 } from '@mantine/core'
 import { useInputState, useListState } from '@mantine/hooks'
-import { EmittedRconEvent, RconEvent } from '@shared/rcon'
+import { RconEvent } from '@shared/rcon'
+import { EMITTED_EVENTS } from '@shared/events'
 import { useEffect } from 'react'
 import { EventsTable } from './EventsTable'
 import { Link, Route, useLocation } from 'wouter'
@@ -25,12 +26,12 @@ function App(): React.JSX.Element {
   const [location] = useLocation()
 
   useEffect(() => {
-    window.electron.ipcRenderer.on(EmittedRconEvent.NEW_RECEIVED_EVENT, (_, allEvents) => {
+    window.electron.ipcRenderer.on(EMITTED_EVENTS.main.UPDATE_ALL_EVENTS, (_, allEvents) => {
       eventsHandlers.setState(allEvents.toReversed())
     })
 
     return () => {
-      window.electron.ipcRenderer.removeAllListeners(EmittedRconEvent.NEW_RECEIVED_EVENT)
+      window.electron.ipcRenderer.removeAllListeners(EMITTED_EVENTS.main.UPDATE_ALL_EVENTS)
     }
   })
 
