@@ -818,7 +818,7 @@ type Sleep = DefaultEntries<EventType.SLEEP>
 /** Triggered if the dedicated server wakes from its power saving. */
 type Wake = DefaultEntries<EventType.WAKE>
 
-type Events =
+type RconEvent =
   | ServerStartup
   | ServerShutdown
   | LobbyConnect
@@ -894,8 +894,8 @@ type Events =
  * TODO: extract the types to be shared with the renderer part
  */
 export class EventRefinedTransformer {
-  public formatEvent = (eventStr: string): Events => {
-    const event = JSON.parse(eventStr) as Events
+  public formatEvent = (eventStr: string): RconEvent => {
+    const event = JSON.parse(eventStr) as RconEvent
 
     switch (event.EventID) {
       case EventType.SERVER_STARTUP: {

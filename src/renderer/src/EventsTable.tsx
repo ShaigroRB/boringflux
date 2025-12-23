@@ -2,13 +2,13 @@ import { Alert } from '@mantine/core'
 
 import { IconChevronDown, IconChevronUp, IconInfoCircle } from '@tabler/icons-react'
 import { DataTable } from 'mantine-datatable'
-import { Packet } from '@shared/rcon'
+import { RconEvent, Packet } from '@shared/rcon'
 import { useState } from 'react'
 
 const IconInfo = <IconInfoCircle />
 
 export type EventsTableProps = {
-  events: { EventID: string; Time: string; id: string }[]
+  events: RconEvent[]
 }
 export const EventsTable = ({ events }: EventsTableProps) => {
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({})

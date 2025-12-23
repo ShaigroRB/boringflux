@@ -11,7 +11,7 @@ import {
   Stack
 } from '@mantine/core'
 import { useInputState, useListState } from '@mantine/hooks'
-import { EmittedRconEvent } from '@shared/rcon'
+import { EmittedRconEvent, RconEvent } from '@shared/rcon'
 import { useEffect } from 'react'
 import { EventsTable } from './EventsTable'
 import { Link, Route, useLocation } from 'wouter'
@@ -21,7 +21,7 @@ function App(): React.JSX.Element {
   const [host, setHost] = useInputState('127.0.0.1')
   const [port, setPort] = useInputState<string | number>(42070)
   const [pwd, setPwd] = useInputState('admin')
-  const [events, eventsHandlers] = useListState<{ EventID: string; Time: string; id: string }>([])
+  const [events, eventsHandlers] = useListState<RconEvent>([])
   const [location] = useLocation()
 
   useEffect(() => {

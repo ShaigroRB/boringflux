@@ -814,7 +814,7 @@ type Sleep = DefaultEntries<EventType.SLEEP>
 /** Triggered if the dedicated server wakes from its power saving. */
 type Wake = DefaultEntries<EventType.WAKE>
 
-export type Events =
+export type RconEvent =
   | ServerStartup
   | ServerShutdown
   | LobbyConnect
@@ -888,8 +888,8 @@ export type Events =
  * To be used to transform any JSON in packets into typed events with all of their properties.
  */
 export class EventStringTransformer {
-  public static formatEvent = (eventStr: string): Events => {
-    const json = JSON.parse(eventStr) as Events
+  public static formatEvent = (eventStr: string): RconEvent => {
+    const json = JSON.parse(eventStr) as RconEvent
     json.id = new Date().getTime().toString(36) + Math.random().toString(36).slice(2)
     return json
   }

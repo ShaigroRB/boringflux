@@ -4,12 +4,12 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { Rcon } from './rcon'
 
-import { DEFAULTS, EmittedRconEvent, Events } from '@shared/rcon'
+import { DEFAULTS, EmittedRconEvent, RconEvent } from '@shared/rcon'
 import { MOCK_EVENTS } from './json'
 
 const isMock = true
 const rcon = new Rcon({ isMock })
-const allEvents: Events[] = MOCK_EVENTS as Events[]
+const allEvents: RconEvent[] = MOCK_EVENTS as RconEvent[]
 
 function createWindow(): void {
   // Create the browser window.
@@ -25,7 +25,7 @@ function createWindow(): void {
     }
   })
 
-  rcon.on(EmittedRconEvent.NEW_RECEIVED_EVENT, (json: Events) => {
+  rcon.on(EmittedRconEvent.NEW_RECEIVED_EVENT, (json: RconEvent) => {
     if (!isMock) {
       allEvents.push(json)
     }
