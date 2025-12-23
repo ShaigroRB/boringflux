@@ -115,17 +115,17 @@ export class Rcon extends EventEmitter {
     const json = EventStringTransformer.formatEvent(jsonData)
 
     switch (type) {
-      case Packet.Event.RCON_LOGGED_IN: {
+      case Packet.EventType.RCON_LOGGED_IN: {
         console.log('WOOOOOOOHOOOOO! We logged in!')
         console.log('To avoid too much verbose, ping events are hidden.')
         break
       }
-      case Packet.Event.RCON_PING: {
-        this.send_request(Packet.Request.PING, 'prout')
+      case Packet.EventType.RCON_PING: {
+        this.send_request(Packet.RequestType.PING, 'prout')
         break
       }
       default: {
-        console.log({ size, type: Packet.Event[type], json })
+        console.log({ size, type: Packet.EventType[type], json })
         this.emit(EmittedRconEvent.NEW_RECEIVED_EVENT, json)
       }
     }
@@ -133,7 +133,7 @@ export class Rcon extends EventEmitter {
 
   public socketOnConnect = (): void => {
     this.emit('connect')
-    this.send_request(Packet.Request.LOGIN, this.password)
+    this.send_request(Packet.RequestType.LOGIN, this.password)
   }
 
   public socketOnEnd = (): void => {

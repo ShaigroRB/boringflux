@@ -1,4 +1,4 @@
-export enum Request {
+export enum RequestType {
   LOGIN = 0,
   PING = 1,
   COMMAND = 2,
@@ -12,9 +12,9 @@ export enum Request {
 /**
  * Event is basically the response type.
  * In the docs, it's always called as event, event id or event type.
- * To be coherent, I'll use "Event" for the naming too.
+ * To be coherent, I'll use "EventType" for the naming too.
  */
-export enum Event {
+export enum EventType {
   SERVER_STARTUP = 0,
   SERVER_SHUTDOWN = 1,
   LOBBY_CONNECT = 2,
@@ -86,6 +86,6 @@ export enum Event {
 }
 
 export const Packet = {
-  Request,
-  Event
+  RequestType,
+  EventType
 }

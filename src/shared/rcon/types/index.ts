@@ -7,7 +7,7 @@ export * from './mission'
 /** Rename Event & Request to avoid confusion with already existing APIs (web & nodejs)
  *  If there's no need to use the enum as a type, prefer using `Packet.Event` or `Packet.Request`.
  */
-export { type Request as RconRequest, type Event as RconEvent, Packet } from './packet'
+export { type RequestType, type EventType, Packet } from './packet'
 export * from './powerup'
 export * from './skin'
 export * from './taunt'

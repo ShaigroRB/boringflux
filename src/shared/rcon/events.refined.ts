@@ -11,12 +11,12 @@
 
 import { Enemy, EnemyRank } from './types/enemy'
 import { Hat } from './types/hat'
-import { Event } from './types/packet'
+import { EventType } from './types/packet'
 import { PowerUp } from './types/powerup'
 import { Team } from './types/team'
 import { Weapon } from './types/weapon'
 
-type DefaultEntries<EventId extends Event> = {
+type DefaultEntries<EventId extends EventType> = {
   /** Unix timestamp the RCON event was sent. */
   Time: number
   /** The enum ID of the RCON event. */
@@ -38,19 +38,19 @@ type ProfileInfo = {
 }
 
 /** Triggers when the server starts. Although I'm not sure if it's possible to receive.. */
-type ServerStartup = DefaultEntries<Event.SERVER_STARTUP>
+type ServerStartup = DefaultEntries<EventType.SERVER_STARTUP>
 
 /** Triggers when the server is shutdown. */
-type ServerShutdown = DefaultEntries<Event.SERVER_SHUTDOWN>
+type ServerShutdown = DefaultEntries<EventType.SERVER_SHUTDOWN>
 
 /** Triggers when the server connects to the server list. */
-type LobbyConnect = DefaultEntries<Event.LOBBY_CONNECT>
+type LobbyConnect = DefaultEntries<EventType.LOBBY_CONNECT>
 
 /** Triggers when the server loses connection to the server list. */
-type LobbyDisconnect = DefaultEntries<Event.LOBBY_DISCONNECT>
+type LobbyDisconnect = DefaultEntries<EventType.LOBBY_DISCONNECT>
 
 /** Triggers when a new player connects to the server. */
-type PlayerConnect = DefaultEntries<Event.PLAYER_CONNECT> & {
+type PlayerConnect = DefaultEntries<EventType.PLAYER_CONNECT> & {
   /** The IP address of the connecting player. */
   IP: string
   /** The player name of the connecting player. */
@@ -68,7 +68,7 @@ type PlayerConnect = DefaultEntries<Event.PLAYER_CONNECT> & {
  * The weapons returned are not always what the player selected in loadout;
  * use player_loadout for accurate loadout weapons.
  */
-type PlayerSpawn = DefaultEntries<Event.PLAYER_SPAWN> & {
+type PlayerSpawn = DefaultEntries<EventType.PLAYER_SPAWN> & {
   /** The ID of the player who spawned. */
   PlayerID: number
   /** The player's profile info. */
@@ -102,7 +102,7 @@ type PlayerSpawn = DefaultEntries<Event.PLAYER_SPAWN> & {
 }
 
 /** Triggers when a player dies. */
-type PlayerDeath = DefaultEntries<Event.PLAYER_DEATH> & {
+type PlayerDeath = DefaultEntries<EventType.PLAYER_DEATH> & {
   /** ID of the player who was killed. */
   VictimID: number
   /** ID of the player who killed the victim. */
@@ -140,7 +140,7 @@ type PlayerDeath = DefaultEntries<Event.PLAYER_DEATH> & {
 }
 
 /** Triggers when a player disconnects from the server. */
-type PlayerDisconnect = DefaultEntries<Event.PLAYER_DISCONNECT> & {
+type PlayerDisconnect = DefaultEntries<EventType.PLAYER_DISCONNECT> & {
   /** The IP address of the disconnecting player. */
   IP: string
   /** The player ID of the disconnected player. */
@@ -156,7 +156,7 @@ type PlayerDisconnect = DefaultEntries<Event.PLAYER_DISCONNECT> & {
 }
 
 /** Triggers when a player changes team. */
-type PlayerTeamChange = DefaultEntries<Event.PLAYER_TEAM_CHANGE> & {
+type PlayerTeamChange = DefaultEntries<EventType.PLAYER_TEAM_CHANGE> & {
   /** Player ID of the player changing teams. */
   PlayerID: number
   /** The player's profile info. */
@@ -170,7 +170,7 @@ type PlayerTeamChange = DefaultEntries<Event.PLAYER_TEAM_CHANGE> & {
 }
 
 /** Triggers when a player levels up. */
-type PlayerLevelUp = DefaultEntries<Event.PLAYER_LEVEL_UP> & {
+type PlayerLevelUp = DefaultEntries<EventType.PLAYER_LEVEL_UP> & {
   /** ID of the player who leveled up. */
   PlayerID: number
   /** The player's profile info. */
@@ -186,7 +186,7 @@ type PlayerLevelUp = DefaultEntries<Event.PLAYER_LEVEL_UP> & {
 }
 
 /** Triggers when a player gets a power-up. */
-type PlayerGetPowerup = DefaultEntries<Event.PLAYER_GET_POWERUP> & {
+type PlayerGetPowerup = DefaultEntries<EventType.PLAYER_GET_POWERUP> & {
   /** ID of the player who obtained the power-up. */
   PlayerID: number
   /** The player's profile info. */
@@ -200,7 +200,7 @@ type PlayerGetPowerup = DefaultEntries<Event.PLAYER_GET_POWERUP> & {
 }
 
 /** Triggers when a player takes damage. (DISABLED FOR NOW) */
-type PlayerDamage = DefaultEntries<Event.PLAYER_DAMAGE> & {
+type PlayerDamage = DefaultEntries<EventType.PLAYER_DAMAGE> & {
   /** Damage dealer's player ID. */
   AttackerID: number
   /** Damage recipient's player ID. */
@@ -216,7 +216,7 @@ type PlayerDamage = DefaultEntries<Event.PLAYER_DAMAGE> & {
 }
 
 /** Triggers when a player is finished loading their map. */
-type PlayerLoaded = DefaultEntries<Event.PLAYER_LOADED> & {
+type PlayerLoaded = DefaultEntries<EventType.PLAYER_LOADED> & {
   /** ID of the player who finished loading. */
   PlayerID: number
   /** The player's profile info. */
@@ -224,7 +224,7 @@ type PlayerLoaded = DefaultEntries<Event.PLAYER_LOADED> & {
 }
 
 /** Triggers when a Team Deathmatch round starts. */
-type TdmRoundStart = DefaultEntries<Event.TDM_ROUND_START> & {
+type TdmRoundStart = DefaultEntries<EventType.TDM_ROUND_START> & {
   /** How many USC players are alive when the round starts. */
   Alive1: number
   /** How many THE MAN players are alive when the round starts. */
@@ -236,7 +236,7 @@ type TdmRoundStart = DefaultEntries<Event.TDM_ROUND_START> & {
 }
 
 /** Triggers when a Team Deathmatch round ends. */
-type TdmRoundEnd = DefaultEntries<Event.TDM_ROUND_END> & {
+type TdmRoundEnd = DefaultEntries<EventType.TDM_ROUND_END> & {
   /** How many USC players were connected when the round ended. */
   Players1: string
   /** How many THE MAN players were connected when the round ended. */
@@ -254,7 +254,7 @@ type TdmRoundEnd = DefaultEntries<Event.TDM_ROUND_END> & {
 }
 
 /** Triggers when the Team Deathmatch flag unlocks for capture. */
-type TdmFlagUnlocked = DefaultEntries<Event.TDM_FLAG_UNLOCKED> & {
+type TdmFlagUnlocked = DefaultEntries<EventType.TDM_FLAG_UNLOCKED> & {
   /** How many USC players are alive when the flag unlocks. */
   Alive1: string
   /** How many THE MAN players are alive when the flag unlocks. */
@@ -270,7 +270,7 @@ type TdmFlagUnlocked = DefaultEntries<Event.TDM_FLAG_UNLOCKED> & {
 }
 
 /** Triggers when the server switches team sides in Team Deathmatch. */
-type TdmSwitchSides = DefaultEntries<Event.TDM_SWITCH_SIDES> & {
+type TdmSwitchSides = DefaultEntries<EventType.TDM_SWITCH_SIDES> & {
   /** Updated score of USC. */
   Score1: string
   /** Updated score of THE MAN. */
@@ -278,7 +278,7 @@ type TdmSwitchSides = DefaultEntries<Event.TDM_SWITCH_SIDES> & {
 }
 
 /** Triggers when a flag in CTF is stolen. */
-type CtfTaken = DefaultEntries<Event.CTF_TAKEN> & {
+type CtfTaken = DefaultEntries<EventType.CTF_TAKEN> & {
   /** Player ID of the flag carrier. */
   CarrierID: string
   /** The player's profile info. */
@@ -294,7 +294,7 @@ type CtfTaken = DefaultEntries<Event.CTF_TAKEN> & {
 }
 
 /** Triggers when a flag in CTF is dropped. */
-type CtfDropped = DefaultEntries<Event.CTF_DROPPED> & {
+type CtfDropped = DefaultEntries<EventType.CTF_DROPPED> & {
   /** Player ID of the flag carrier. */
   CarrierID: string
   /** The player's profile info. */
@@ -310,7 +310,7 @@ type CtfDropped = DefaultEntries<Event.CTF_DROPPED> & {
 }
 
 /** Triggers when a flag is returned to home base. */
-type CtfReturned = DefaultEntries<Event.CTF_RETURNED> & {
+type CtfReturned = DefaultEntries<EventType.CTF_RETURNED> & {
   /** Player ID of the flag returner, if available. */
   ReturnPlayerID: string
   /** The player's profile info, if available. */
@@ -324,7 +324,7 @@ type CtfReturned = DefaultEntries<Event.CTF_RETURNED> & {
 }
 
 /** Triggers when a team scores a CTF point. */
-type CtfScored = DefaultEntries<Event.CTF_SCORED> & {
+type CtfScored = DefaultEntries<EventType.CTF_SCORED> & {
   /** Player ID of the scoring flag carrier. */
   CarrierID: string
   /** The player's profile info. */
@@ -338,7 +338,7 @@ type CtfScored = DefaultEntries<Event.CTF_SCORED> & {
 }
 
 /** Triggers when a generator is repaired. */
-type CtfGeneratorRepaired = DefaultEntries<Event.CTF_GENERATOR_REPAIRED> & {
+type CtfGeneratorRepaired = DefaultEntries<EventType.CTF_GENERATOR_REPAIRED> & {
   /** ID of the generator. */
   ID: string
   /** Team ID of the repaired generator. */
@@ -350,7 +350,7 @@ type CtfGeneratorRepaired = DefaultEntries<Event.CTF_GENERATOR_REPAIRED> & {
 }
 
 /** Triggers when a generator is destroyed. */
-type CtfGeneratorDestroyed = DefaultEntries<Event.CTF_GENERATOR_DESTROYED> & {
+type CtfGeneratorDestroyed = DefaultEntries<EventType.CTF_GENERATOR_DESTROYED> & {
   /** ID of the generator. */
   ID: string
   /** Team ID of the destroyed generator. */
@@ -362,7 +362,7 @@ type CtfGeneratorDestroyed = DefaultEntries<Event.CTF_GENERATOR_DESTROYED> & {
 }
 
 /** Triggers when a turret is repaired. */
-type CtfTurretRepaired = DefaultEntries<Event.CTF_TURRET_REPAIRED> & {
+type CtfTurretRepaired = DefaultEntries<EventType.CTF_TURRET_REPAIRED> & {
   /** ID of the turret. */
   ID: string
   /** Team ID of the repaired turret. */
@@ -374,7 +374,7 @@ type CtfTurretRepaired = DefaultEntries<Event.CTF_TURRET_REPAIRED> & {
 }
 
 /** Triggers when a turret is destroyed. */
-type CtfTurretDestroyed = DefaultEntries<Event.CTF_TURRET_DESTROYED> & {
+type CtfTurretDestroyed = DefaultEntries<EventType.CTF_TURRET_DESTROYED> & {
   /** ID of the turret. */
   ID: string
   /** Team ID of the destroyed turret. */
@@ -386,7 +386,7 @@ type CtfTurretDestroyed = DefaultEntries<Event.CTF_TURRET_DESTROYED> & {
 }
 
 /** Triggers when a resupply station is repaired. */
-type CtfResupplyRepaired = DefaultEntries<Event.CTF_RESUPPLY_REPAIRED> & {
+type CtfResupplyRepaired = DefaultEntries<EventType.CTF_RESUPPLY_REPAIRED> & {
   /** ID of the resupply station. */
   ID: string
   /** Team ID of the repaired resupply station. */
@@ -398,7 +398,7 @@ type CtfResupplyRepaired = DefaultEntries<Event.CTF_RESUPPLY_REPAIRED> & {
 }
 
 /** Triggers when a resupply station is destroyed. */
-type CtfResupplyDestroyed = DefaultEntries<Event.CTF_RESUPPLY_DESTROYED> & {
+type CtfResupplyDestroyed = DefaultEntries<EventType.CTF_RESUPPLY_DESTROYED> & {
   /** ID of the resupply station. */
   ID: string
   /** Team ID of the destroyed resupply station. */
@@ -410,7 +410,7 @@ type CtfResupplyDestroyed = DefaultEntries<Event.CTF_RESUPPLY_DESTROYED> & {
 }
 
 /** Triggers when the current match ends. */
-type MatchEnd = DefaultEntries<Event.MATCH_END> & {
+type MatchEnd = DefaultEntries<EventType.MATCH_END> & {
   /** The scoreboard string that displays the winner or outcome. */
   WinnerText: string
   /** The GML color code of the WinnerText string. */
@@ -430,10 +430,10 @@ type MatchEnd = DefaultEntries<Event.MATCH_END> & {
 }
 
 /** Triggers when the match enters overtime. */
-type MatchOvertime = DefaultEntries<Event.MATCH_OVERTIME>
+type MatchOvertime = DefaultEntries<EventType.MATCH_OVERTIME>
 
 /** Triggers when a new match starts (after warmup ends). */
-type MatchStart = DefaultEntries<Event.MATCH_START> & {
+type MatchStart = DefaultEntries<EventType.MATCH_START> & {
   /** Name of the currently loaded map. */
   MapName: string
   /** File path of the currently loaded map. */
@@ -447,7 +447,7 @@ type MatchStart = DefaultEntries<Event.MATCH_START> & {
 }
 
 /** Triggers at the start of a new wave in Survival mode. */
-type SurvivalNewWave = DefaultEntries<Event.SURVIVAL_NEW_WAVE> & {
+type SurvivalNewWave = DefaultEntries<EventType.SURVIVAL_NEW_WAVE> & {
   /** The current wave number. */
   WaveNumber: string
   /** Number of enemies required to be defeated this wave. */
@@ -461,7 +461,7 @@ type SurvivalNewWave = DefaultEntries<Event.SURVIVAL_NEW_WAVE> & {
 }
 
 /** Triggers when the control point flag unlocks for enemies to capture. */
-type SurvivalWaveBegins = DefaultEntries<Event.SURVIVAL_WAVE_BEGINS> & {
+type SurvivalWaveBegins = DefaultEntries<EventType.SURVIVAL_WAVE_BEGINS> & {
   /** Objective ID assigned to the wave. */
   WaveObjective: string
   /** The current wave number. */
@@ -469,7 +469,7 @@ type SurvivalWaveBegins = DefaultEntries<Event.SURVIVAL_WAVE_BEGINS> & {
 }
 
 /** Triggers when a player opens a chest in Survival mode. */
-type SurvivalBuyChest = DefaultEntries<Event.SURVIVAL_BUY_CHEST> & {
+type SurvivalBuyChest = DefaultEntries<EventType.SURVIVAL_BUY_CHEST> & {
   /** Player ID of the player who opened the chest. */
   PlayerID: number
   /** The player's profile info. */
@@ -483,7 +483,7 @@ type SurvivalBuyChest = DefaultEntries<Event.SURVIVAL_BUY_CHEST> & {
 }
 
 /** Triggers when a message is logged into the server console. */
-type LogMessage = DefaultEntries<Event.LOG_MESSAGE> & {
+type LogMessage = DefaultEntries<EventType.LOG_MESSAGE> & {
   /** The log message string. */
   Message: string
   /** The GML color code of the log message. */
@@ -491,7 +491,7 @@ type LogMessage = DefaultEntries<Event.LOG_MESSAGE> & {
 }
 
 /** Triggered when an RCON client makes a request. */
-type RequestData = DefaultEntries<Event.REQUEST_DATA> & {
+type RequestData = DefaultEntries<EventType.REQUEST_DATA> & {
   /** The original request enum that was sent. */
   CaseID: string
   /** Unique ID of the original request, used for identification. */
@@ -499,7 +499,7 @@ type RequestData = DefaultEntries<Event.REQUEST_DATA> & {
 }
 
 /** Triggered when a command is entered into the console. */
-type CommandEntered = DefaultEntries<Event.COMMAND_ENTERED> & {
+type CommandEntered = DefaultEntries<EventType.COMMAND_ENTERED> & {
   /** The full command string that was entered. */
   Command: string
   /** Source of the command. 0 = in-game console, 1 = RCON. */
@@ -509,7 +509,7 @@ type CommandEntered = DefaultEntries<Event.COMMAND_ENTERED> & {
 }
 
 /** Triggered when an RCON client successfully logs in. */
-type RconLoggedIn = DefaultEntries<Event.RCON_LOGGED_IN> & {
+type RconLoggedIn = DefaultEntries<EventType.RCON_LOGGED_IN> & {
   /** IP address of the connected RCON client. */
   RconIP: string
   /** Port of the connected RCON client. */
@@ -523,19 +523,19 @@ type RconLoggedIn = DefaultEntries<Event.RCON_LOGGED_IN> & {
 }
 
 /** Triggered when the server is paused. */
-type MatchPaused = DefaultEntries<Event.MATCH_PAUSED>
+type MatchPaused = DefaultEntries<EventType.MATCH_PAUSED>
 
 /** Triggered when the server is unpaused. */
-type MatchUnpaused = DefaultEntries<Event.MATCH_UNPAUSED>
+type MatchUnpaused = DefaultEntries<EventType.MATCH_UNPAUSED>
 
 /** Triggered when the warmup phase begins. */
-type WarmupStart = DefaultEntries<Event.WARMUP_START> & {
+type WarmupStart = DefaultEntries<EventType.WARMUP_START> & {
   /** Number of seconds the warmup phase will last. */
   WarmupTime: string
 }
 
 /** Triggered when an RCON client disconnects. */
-type RconDisconnect = DefaultEntries<Event.RCON_DISCONNECT> & {
+type RconDisconnect = DefaultEntries<EventType.RCON_DISCONNECT> & {
   /** IP address of the disconnecting RCON client. */
   RconIP: string
   /** Port of the disconnecting RCON client. */
@@ -545,10 +545,10 @@ type RconDisconnect = DefaultEntries<Event.RCON_DISCONNECT> & {
 }
 
 /** Triggered every 5 seconds for each connected RCON client. */
-type RconPing = DefaultEntries<Event.RCON_PING>
+type RconPing = DefaultEntries<EventType.RCON_PING>
 
 /** Triggered when a player sends a chat message in the Server tab. */
-type ChatMessage = DefaultEntries<Event.CHAT_MESSAGE> & {
+type ChatMessage = DefaultEntries<EventType.CHAT_MESSAGE> & {
   /** ID of the player sending the message, or -1 if sent by the server. */
   PlayerID: number
   /** Name of the user who sent the message. */
@@ -562,7 +562,7 @@ type ChatMessage = DefaultEntries<Event.CHAT_MESSAGE> & {
 }
 
 /** Triggered when a player collects a vice in Survival mode. */
-type SurvivalGetVice = DefaultEntries<Event.SURVIVAL_GET_VICE> & {
+type SurvivalGetVice = DefaultEntries<EventType.SURVIVAL_GET_VICE> & {
   /** ID of the player who collected the vice. */
   PlayerID: number
   /** Player profile/store info. */
@@ -578,7 +578,7 @@ type SurvivalGetVice = DefaultEntries<Event.SURVIVAL_GET_VICE> & {
 }
 
 /** Triggered when a player uses a consumable vice. */
-type SurvivalUseVice = DefaultEntries<Event.SURVIVAL_USE_VICE> & {
+type SurvivalUseVice = DefaultEntries<EventType.SURVIVAL_USE_VICE> & {
   /** ID of the player who used the vice. */
   PlayerID: number
   /** Player profile/store info. */
@@ -588,7 +588,7 @@ type SurvivalUseVice = DefaultEntries<Event.SURVIVAL_USE_VICE> & {
 }
 
 /** Triggered when a player is revived outside of a new wave. */
-type SurvivalPlayerRevive = DefaultEntries<Event.SURVIVAL_PLAYER_REVIVE> & {
+type SurvivalPlayerRevive = DefaultEntries<EventType.SURVIVAL_PLAYER_REVIVE> & {
   /** Player ID of the reviving player. */
   RevivingPlayerID: string
   /** Player ID of the savior (may match RevivingPlayerID if self-revived). */
@@ -604,7 +604,7 @@ type SurvivalPlayerRevive = DefaultEntries<Event.SURVIVAL_PLAYER_REVIVE> & {
 }
 
 /** Triggered when a player performs an emote/taunt. */
-type PlayerTaunt = DefaultEntries<Event.PLAYER_TAUNT> & {
+type PlayerTaunt = DefaultEntries<EventType.PLAYER_TAUNT> & {
   /** ID of the emoting player. */
   PlayerID: number
   /** Player profile/store info. */
@@ -614,7 +614,7 @@ type PlayerTaunt = DefaultEntries<Event.PLAYER_TAUNT> & {
 }
 
 /** Triggered when a player completes a Survival bar mission. */
-type SurvivalCompleteMission = DefaultEntries<Event.SURVIVAL_COMPLETE_MISSION> & {
+type SurvivalCompleteMission = DefaultEntries<EventType.SURVIVAL_COMPLETE_MISSION> & {
   /** ID of the player. */
   PlayerID: number
   /** Player profile/store info. */
@@ -628,7 +628,7 @@ type SurvivalCompleteMission = DefaultEntries<Event.SURVIVAL_COMPLETE_MISSION> &
 }
 
 /** Triggered when a player accepts a Survival bar mission. */
-type SurvivalTakeMission = DefaultEntries<Event.SURVIVAL_TAKE_MISSION> & {
+type SurvivalTakeMission = DefaultEntries<EventType.SURVIVAL_TAKE_MISSION> & {
   /** ID of the player. */
   PlayerID: number
   /** Player profile/store info. */
@@ -642,7 +642,7 @@ type SurvivalTakeMission = DefaultEntries<Event.SURVIVAL_TAKE_MISSION> & {
 }
 
 /** Triggered when a player fails or abandons a Survival bar mission. */
-type SurvivalFailMission = DefaultEntries<Event.SURVIVAL_FAIL_MISSION> & {
+type SurvivalFailMission = DefaultEntries<EventType.SURVIVAL_FAIL_MISSION> & {
   /** ID of the player. */
   PlayerID: number
   /** Player profile/store info. */
@@ -656,7 +656,7 @@ type SurvivalFailMission = DefaultEntries<Event.SURVIVAL_FAIL_MISSION> & {
 }
 
 /** Triggered when a zombie player revives (by kills or console). */
-type ZombrainsRevive = DefaultEntries<Event.ZOMBRAINS_REVIVE> & {
+type ZombrainsRevive = DefaultEntries<EventType.ZOMBRAINS_REVIVE> & {
   /** ID of the player. */
   PlayerID: number
   /** Player profile/store info. */
@@ -664,7 +664,7 @@ type ZombrainsRevive = DefaultEntries<Event.ZOMBRAINS_REVIVE> & {
 }
 
 /** Triggered when a player buys a weapon from a printer. */
-type ZombrainsBuyWeapon = DefaultEntries<Event.ZOMBRAINS_BUY_WEAPON> & {
+type ZombrainsBuyWeapon = DefaultEntries<EventType.ZOMBRAINS_BUY_WEAPON> & {
   /** ID of the purchasing player. */
   PlayerID: number
   /** Player profile/store info. */
@@ -676,10 +676,10 @@ type ZombrainsBuyWeapon = DefaultEntries<Event.ZOMBRAINS_BUY_WEAPON> & {
 }
 
 /** Triggered when the match starts in Zombrains. */
-type ZombrainsBegin = DefaultEntries<Event.ZOMBRAINS_BEGIN>
+type ZombrainsBegin = DefaultEntries<EventType.ZOMBRAINS_BEGIN>
 
 /** Triggered when the helicopter spawns to pick up surviving humans in Zombrains. */
-type ZombrainsHelicopterArriving = DefaultEntries<Event.ZOMBRAINS_HELICOPTER_ARRIVING> & {
+type ZombrainsHelicopterArriving = DefaultEntries<EventType.ZOMBRAINS_HELICOPTER_ARRIVING> & {
   /** X coordinate where the helicopter plans to land. */
   LandingX: string
   /** Y coordinate where the helicopter plans to land. */
@@ -687,7 +687,7 @@ type ZombrainsHelicopterArriving = DefaultEntries<Event.ZOMBRAINS_HELICOPTER_ARR
 }
 
 /** Triggered when the helicopter reaches the landing zone and begins boarding humans in Zombrains. */
-type ZombrainsHelicopterBoarding = DefaultEntries<Event.ZOMBRAINS_HELICOPTER_BOARDING> & {
+type ZombrainsHelicopterBoarding = DefaultEntries<EventType.ZOMBRAINS_HELICOPTER_BOARDING> & {
   /** Current X coordinate of the helicopter. */
   X: string
   /** Current Y coordinate of the helicopter. */
@@ -696,7 +696,7 @@ type ZombrainsHelicopterBoarding = DefaultEntries<Event.ZOMBRAINS_HELICOPTER_BOA
 
 /** Triggered when a human player boards the helicopter in Zombrains. */
 type ZombrainsHelicopterPlayerBoarded =
-  DefaultEntries<Event.ZOMBRAINS_HELICOPTER_PLAYER_BOARDED> & {
+  DefaultEntries<EventType.ZOMBRAINS_HELICOPTER_PLAYER_BOARDED> & {
     /** ID of the player boarding the helicopter. */
     PlayerID: number
     /** Player profile/store info. */
@@ -704,7 +704,7 @@ type ZombrainsHelicopterPlayerBoarded =
   }
 
 /** Triggered when the Zombrains match ends. */
-type ZombrainsEnd = DefaultEntries<Event.ZOMBRAINS_END> & {
+type ZombrainsEnd = DefaultEntries<EventType.ZOMBRAINS_END> & {
   /** Number of human players alive or escaped via helicopter. */
   Alive: string
   /** Number of zombie players. */
@@ -712,7 +712,7 @@ type ZombrainsEnd = DefaultEntries<Event.ZOMBRAINS_END> & {
 }
 
 /** Triggered on the exact frame the game ends (more precise than match_end). */
-type GameOver = DefaultEntries<Event.GAME_OVER> & {
+type GameOver = DefaultEntries<EventType.GAME_OVER> & {
   /** Scoreboard winner text. */
   WinnerText: string
   /** GML color code of the winner text. */
@@ -730,14 +730,14 @@ type GameOver = DefaultEntries<Event.GAME_OVER> & {
 }
 
 /** Triggered when the last human player (except the host) quits the server. */
-type ServerEmpty = DefaultEntries<Event.SERVER_EMPTY> & {
+type ServerEmpty = DefaultEntries<EventType.SERVER_EMPTY> & {
   /** Number of player bots currently in the server. */
   Bots: string
   /** '1' if the host player is present, '0' if not (dedicated server). */
   Host: string
 }
 /** Triggered when a player ranks up or down in Weapons Deal and receives a new weapon. */
-type WeaponsdealRankchange = DefaultEntries<Event.WEAPONSDEAL_RANKCHANGE> & {
+type WeaponsdealRankchange = DefaultEntries<EventType.WEAPONSDEAL_RANKCHANGE> & {
   /** ID of the player whose rank changed. */
   PlayerID: number
   /** Player profile/store information (JSON string). */
@@ -747,7 +747,7 @@ type WeaponsdealRankchange = DefaultEntries<Event.WEAPONSDEAL_RANKCHANGE> & {
 }
 
 /** Triggered when a team captures a flag in Take Over mode. */
-type TakeoverFlagcapture = DefaultEntries<Event.TAKEOVER_FLAGCAPTURE> & {
+type TakeoverFlagcapture = DefaultEntries<EventType.TAKEOVER_FLAGCAPTURE> & {
   /** The ID of the flag that was captured. */
   FlagID: string
   /** X coordinate of the captured flag. */
@@ -765,7 +765,7 @@ type TakeoverFlagcapture = DefaultEntries<Event.TAKEOVER_FLAGCAPTURE> & {
 }
 
 /** Triggered when the match starts in Take Over or when flags are randomly cycled. */
-type TakeoverFlagscreated = DefaultEntries<Event.TAKEOVER_FLAGSCREATED> & {
+type TakeoverFlagscreated = DefaultEntries<EventType.TAKEOVER_FLAGSCREATED> & {
   /** Number of flags spawned in the match. */
   FlagAmount: string
   /** Current score of team 1 (USC). */
@@ -776,7 +776,7 @@ type TakeoverFlagscreated = DefaultEntries<Event.TAKEOVER_FLAGSCREATED> & {
 }
 
 /** Triggered when a player finishes using the loadout menu. */
-type PlayerLoadout = DefaultEntries<Event.PLAYER_LOADOUT> & {
+type PlayerLoadout = DefaultEntries<EventType.PLAYER_LOADOUT> & {
   /** ID of the player who selected their loadout. */
   PlayerID: number
   /** The player’s profile info. */
@@ -796,7 +796,7 @@ type PlayerLoadout = DefaultEntries<Event.PLAYER_LOADOUT> & {
 }
 
 /** Triggered when a bomb is defused in Survival mode. */
-type SurvivalBombDefused = DefaultEntries<Event.SURVIVAL_BOMB_DEFUSED> & {
+type SurvivalBombDefused = DefaultEntries<EventType.SURVIVAL_BOMB_DEFUSED> & {
   /** How much time was left on the bomb when it was defused. */
   TimeLeft: string
   /** ID of the player who defused the bomb. */
@@ -804,19 +804,19 @@ type SurvivalBombDefused = DefaultEntries<Event.SURVIVAL_BOMB_DEFUSED> & {
 }
 
 /** Triggered when a bomb explodes in Survival and ends the match. */
-type SurvivalBombExploded = DefaultEntries<Event.SURVIVAL_BOMB_EXPLODED>
+type SurvivalBombExploded = DefaultEntries<EventType.SURVIVAL_BOMB_EXPLODED>
 
 /** Triggered when Bomb Dude, Demolitions Guy, Operator or EXPLODEBOT 5000 re-arm a defused bomb. */
-type SurvivalBombRearmed = DefaultEntries<Event.SURVIVAL_BOMB_REARMED> & {
+type SurvivalBombRearmed = DefaultEntries<EventType.SURVIVAL_BOMB_REARMED> & {
   /** How much time is left on the bomb that was rearmed. */
   TimeLeft: string
 }
 
 /** Triggered if the dedicated server falls sleep to save power. */
-type Sleep = DefaultEntries<Event.SLEEP>
+type Sleep = DefaultEntries<EventType.SLEEP>
 
 /** Triggered if the dedicated server wakes from its power saving. */
-type Wake = DefaultEntries<Event.WAKE>
+type Wake = DefaultEntries<EventType.WAKE>
 
 type Events =
   | ServerStartup
@@ -898,7 +898,7 @@ export class EventRefinedTransformer {
     const event = JSON.parse(eventStr) as Events
 
     switch (event.EventID) {
-      case Event.SERVER_STARTUP: {
+      case EventType.SERVER_STARTUP: {
         return event
       }
       default:

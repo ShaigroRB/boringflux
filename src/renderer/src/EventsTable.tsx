@@ -43,7 +43,7 @@ export const EventsTable = ({ events }: EventsTableProps) => {
             accessor: 'EventID',
             title: 'Event',
             width: 200,
-            render: (record) => <>{Packet.Event[record.EventID]}</>
+            render: (record) => <>{Packet.EventType[record.EventID]}</>
           },
           { accessor: 'Time' }
         ]}
