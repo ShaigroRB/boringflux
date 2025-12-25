@@ -10,7 +10,7 @@ import { MOCK_EVENTS } from './json'
 
 const isMock = true
 const rcon = new Rcon({ isMock })
-const allEvents: RconEvent[] = MOCK_EVENTS as RconEvent[]
+const allEvents: RconEvent[] = isMock ? (MOCK_EVENTS as RconEvent[]) : []
 
 function createWindow(): void {
   // Create the browser window.
