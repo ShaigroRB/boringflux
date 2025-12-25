@@ -2,7 +2,7 @@ import { Alert } from '@mantine/core'
 
 import { IconChevronDown, IconChevronUp, IconInfoCircle } from '@tabler/icons-react'
 import { DataTable } from 'mantine-datatable'
-import { RconEvent, Packet } from '@shared/rcon'
+import { Constants, RconEvent } from '@shared/rcon'
 import { useState } from 'react'
 
 const IconInfo = <IconInfoCircle />
@@ -43,7 +43,7 @@ export const EventsTable = ({ events }: EventsTableProps) => {
             accessor: 'EventID',
             title: 'Event',
             width: 200,
-            render: (record) => <>{Packet.EventTypeName[record.EventID]}</>
+            render: (record) => <>{Constants.EventTypeNames[record.EventID]}</>
           },
           { accessor: 'Time' }
         ]}

@@ -1,6 +1,6 @@
 import EventEmitter from 'node:events'
 import { Socket, createConnection } from 'node:net'
-import { Packet, EventStringTransformer, DEFAULTS } from '@shared/rcon'
+import { EventStringTransformer, DEFAULTS, Constants } from '@shared/rcon'
 import { EMITTED_EVENTS } from '@shared/events'
 
 export class Rcon extends EventEmitter {
@@ -116,17 +116,17 @@ export class Rcon extends EventEmitter {
     const json = EventStringTransformer.formatEvent(jsonData)
 
     switch (type) {
-      case Packet.EventType.RCON_LOGGED_IN: {
+      case Constants.EventTypes.RCON_LOGGED_IN: {
         console.log('WOOOOOOOHOOOOO! We logged in!')
         console.log('To avoid too much verbose, ping events are hidden.')
         break
       }
-      case Packet.EventType.RCON_PING: {
-        this.send_request(Packet.RequestType.PING, 'prout')
+      case Constants.EventTypes.RCON_PING: {
+        this.send_request(Constants.RequestTypes.PING, 'prout')
         break
       }
       default: {
-        console.log({ size, type: Packet.EventType[type], json })
+        console.log({ size, type: Constants.EventTypes[type], json })
         this.emit(EMITTED_EVENTS.rcon.NEW_EVENT, json)
       }
     }
@@ -134,7 +134,7 @@ export class Rcon extends EventEmitter {
 
   public socketOnConnect = (): void => {
     this.emit('connect')
-    this.send_request(Packet.RequestType.LOGIN, this.password)
+    this.send_request(Constants.RequestTypes.LOGIN, this.password)
   }
 
   public socketOnEnd = (): void => {

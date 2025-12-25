@@ -1,6 +1,6 @@
 import { createReverseMap } from '@shared/utils'
 
-export const RequestType = {
+export const RequestTypes = {
   LOGIN: 0,
   PING: 1,
   COMMAND: 2,
@@ -11,14 +11,14 @@ export const RequestType = {
   REQUEST_SCOREBOARD: 7
 } as const
 
-export type RequestType = (typeof RequestType)[keyof typeof RequestType]
+export type RequestType = (typeof RequestTypes)[keyof typeof RequestTypes]
 
 /**
  * Event is basically the response type.
  * In the docs, it's always called as event, event id or event type.
  * To be coherent, I'll use "EventType" for the naming too.
  */
-export const EventType = {
+export const EventTypes = {
   SERVER_STARTUP: 0,
   SERVER_SHUTDOWN: 1,
   LOBBY_CONNECT: 2,
@@ -89,11 +89,7 @@ export const EventType = {
   WAKE: 67
 } as const
 
-export type EventType = (typeof EventType)[keyof typeof EventType]
+export type EventType = (typeof EventTypes)[keyof typeof EventTypes]
 
-export const Packet = {
-  RequestType,
-  EventType,
-  RequestTypeName: createReverseMap(RequestType),
-  EventTypeName: createReverseMap(EventType)
-} as const
+export const RequestTypeNames = createReverseMap(RequestTypes)
+export const EventTypeNames = createReverseMap(EventTypes)
