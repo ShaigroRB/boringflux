@@ -1,6 +1,7 @@
 import { createReverseMap } from '@shared/utils'
 
 export const Stores = {
+  UNKNOWN_OR_BOT: -1,
   STEAM: 0,
   DISCORD: 1,
   ITCHIO: 2,
