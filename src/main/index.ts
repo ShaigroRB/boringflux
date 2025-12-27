@@ -4,13 +4,15 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { Rcon } from './rcon'
 
-import { DEFAULTS, RconEvent } from '@shared/rcon'
+import { DEFAULTS, EventRefinedTransformer, RconEvent } from '@shared/rcon'
 import { EMITTED_EVENTS } from '@shared/events'
 import { MOCK_EVENTS } from './json'
 
-const isMock = true
+const isMock = false
 const rcon = new Rcon({ isMock })
-const allEvents: RconEvent[] = isMock ? (MOCK_EVENTS as RconEvent[]) : []
+const allEvents: RconEvent[] = isMock
+  ? (MOCK_EVENTS.map((e) => EventRefinedTransformer.formatOgEvent(e)) as RconEvent[])
+  : []
 
 function createWindow(): void {
   // Create the browser window.

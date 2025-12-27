@@ -1,6 +1,6 @@
 import EventEmitter from 'node:events'
 import { Socket, createConnection } from 'node:net'
-import { EventStringTransformer, DEFAULTS, Constants } from '@shared/rcon'
+import { DEFAULTS, Constants, EventRefinedTransformer } from '@shared/rcon'
 import { EMITTED_EVENTS } from '@shared/events'
 
 export class Rcon extends EventEmitter {
@@ -75,6 +75,7 @@ export class Rcon extends EventEmitter {
       })
       .on('error', (err) => {
         this.emit('error', err)
+        console.log(err)
       })
       .on('end', () => {
         this.socketOnEnd()
@@ -113,7 +114,8 @@ export class Rcon extends EventEmitter {
     const type = data.readInt16LE(DELIMITER_BYTES + SIZE_BYTES)
     const jsonData = data.toString('utf8', DELIMITER_BYTES + SIZE_BYTES + TYPE_BYTES, size + 4)
 
-    const json = EventStringTransformer.formatEvent(jsonData)
+    // const json = EventStringTransformer.formatEvent(jsonData)
+    const json = EventRefinedTransformer.formatEvent(jsonData)
 
     switch (type) {
       case Constants.EventTypes.RCON_LOGGED_IN: {

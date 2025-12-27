@@ -1,4 +1,6 @@
-export const MOCK_EVENTS = [
+import { OgRconEvent } from '@shared/rcon'
+
+export const MOCK_EVENTS: OgRconEvent[] = [
   {
     Color: '16777215',
     Message: 'RCON: Client 4 from ::ffff:127.0.0.1:42070 logged in successfully!',
