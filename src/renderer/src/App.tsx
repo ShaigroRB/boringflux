@@ -17,6 +17,7 @@ import { useEffect } from 'react'
 import { EventsTable } from './EventsTable'
 import { Link, Route, useLocation } from 'wouter'
 import { IconBlocks, IconHome2, IconTerminal2 } from '@tabler/icons-react'
+import { Console } from './Console'
 
 function App(): React.JSX.Element {
   const [host, setHost] = useInputState('127.0.0.1')
@@ -95,7 +96,9 @@ function App(): React.JSX.Element {
         <Route path="/">
           <EventsTable events={events} />
         </Route>
-        <Route path="/console">send command</Route>
+        <Route path="/console">
+          <Console events={events} />
+        </Route>
         <Route path="/custom-commands">custom commands</Route>
       </AppShell.Main>
     </AppShell>
