@@ -1,7 +1,9 @@
 import { createReverseMap } from '@shared/utils'
 
 export const Gamemodes = {
-  DEATMATCH: 0 // todo: check all gamemodes
+  DEATMATCH: 0, // todo: check all gamemodes
+  ZOMBRAINS: 3,
+  SURVIVAL: 4
 } as const
 
 export const GamemodeNames = createReverseMap(Gamemodes)

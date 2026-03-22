@@ -4,6 +4,7 @@ import { createReverseMap } from '@shared/utils'
 export const Deaths = {
   NORMAL: 0
   // research the other death types
+  // goes at least up to 9
 }
 
 export const DeathNames = createReverseMap(Deaths)
