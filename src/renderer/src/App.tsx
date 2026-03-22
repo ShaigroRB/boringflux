@@ -36,7 +36,7 @@ function App(): React.JSX.Element {
     }
   })
 
-  const isConnected = events.length > 1
+  const isConnected = events.length >= 1
 
   const rconConnect = (): void => window.api.rconConnect(host, Number(port), pwd)
 
@@ -63,6 +63,21 @@ function App(): React.JSX.Element {
             </Stack>
 
             <Divider />
+            <Button
+              onClick={() => {
+                window.api.requestData()
+              }}
+            >
+              Special request
+            </Button>
+
+            <Button
+              onClick={() => {
+                console.log(JSON.stringify(events))
+              }}
+            >
+              Log events in console
+            </Button>
 
             <NavLink
               component={Link}

@@ -78,6 +78,10 @@ app.whenReady().then(() => {
     }
   )
 
+  ipcMain.on(EMITTED_EVENTS.renderer.REQUEST_DATA, () => {
+    rcon.test_request_data()
+  })
+
   createWindow()
 
   app.on('activate', function () {

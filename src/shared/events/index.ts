@@ -7,7 +7,8 @@ const MainEvents = {
   UPDATE_ALL_EVENTS: 'update_all_events'
 } as const
 const RendererEvents = {
-  CONNECT: 'connect'
+  CONNECT: 'connect',
+  REQUEST_DATA: 'request_data'
 } as const
 
 export const EMITTED_EVENTS = {

@@ -1,6 +1,6 @@
 import EventEmitter from 'node:events'
 import { Socket, createConnection } from 'node:net'
-import { DEFAULTS, Constants, EventRefinedTransformer } from '@shared/rcon'
+import { DEFAULTS, Constants, EventRefinedTransformer, EventStringTransformer } from '@shared/rcon'
 import { EMITTED_EVENTS } from '@shared/events'
 
 export class Rcon extends EventEmitter {
@@ -45,6 +45,7 @@ export class Rcon extends EventEmitter {
      */
 
     const data_with_id = `"${id}" "${data}"`
+    console.log(`${type}, ${data_with_id}`)
     this.send_request(type, data_with_id)
   }
 
@@ -117,6 +118,15 @@ export class Rcon extends EventEmitter {
     // const json = EventStringTransformer.formatEvent(jsonData)
     const json = EventRefinedTransformer.formatEvent(jsonData)
 
+    // too many LOG_MESSAGE & RCON_PING, no need to show them for debugging
+    if (type !== Constants.EventTypes.RCON_PING && type !== Constants.EventTypes.LOG_MESSAGE) {
+      this.emit(EMITTED_EVENTS.rcon.NEW_EVENT, json)
+    }
+
+    if (type === Constants.EventTypes.REQUEST_DATA) {
+      this.emit(EMITTED_EVENTS.rcon.NEW_EVENT, json)
+    }
+
     switch (type) {
       case Constants.EventTypes.RCON_LOGGED_IN: {
         console.log('WOOOOOOOHOOOOO! We logged in!')
@@ -129,7 +139,6 @@ export class Rcon extends EventEmitter {
       }
       default: {
         console.log({ size, type: Constants.EventTypes[type], json })
-        this.emit(EMITTED_EVENTS.rcon.NEW_EVENT, json)
       }
     }
   }
@@ -141,5 +150,17 @@ export class Rcon extends EventEmitter {
 
   public socketOnEnd = (): void => {
     this.emit('end')
+  }
+
+  public test_request_data = (): void => {
+    setTimeout(() => {
+      this.send_request_with_id(Constants.RequestTypes.REQUEST_PLAYER, 'player', '0')
+    }, 1_000)
+    setTimeout(() => {
+      this.send_request_with_id(Constants.RequestTypes.REQUEST_MATCH, 'match', '0')
+    }, 3_000)
+    setTimeout(() => {
+      this.send_request_with_id(Constants.RequestTypes.REQUEST_SCOREBOARD, 'scoreboard', '0')
+    }, 5_000)
   }
 }
