@@ -8,7 +8,7 @@
  *
  * todo: The refined types stop at `TdmRoundEnd`. Starts from there again.
  */
-import { EventTypes } from './types/packet'
+import { EventTypes, RequestTypes } from './types/packet'
 import type {
   CommandSource,
   CtfFlagReturn,
@@ -31,7 +31,13 @@ import type {
   Vice,
   Weapon
 } from './types'
-import { EventStringTransformer, OgDefaultEntries, OgRconEvent } from './events.str'
+import {
+  EventStringTransformer,
+  type OgDefaultEntries,
+  type OgPlayerData,
+  type OgRconEvent,
+  type OgRequestDataDefaultEntries
+} from './events.str'
 
 type DefaultEntries<EventId extends EventType> = {
   /** Unique id added after receiving the packet. */
@@ -566,14 +572,106 @@ type LogMessage = DefaultEntries<typeof EventTypes.LOG_MESSAGE> & {
   Color: string
 }
 
-// todo: refine this type for request_* types
+type SpecialRequestDataType = Extract<
+  RequestType,
+  | typeof RequestTypes.REQUEST_BOUNCE
+  | typeof RequestTypes.REQUEST_MATCH
+  | typeof RequestTypes.REQUEST_PLAYER
+  | typeof RequestTypes.REQUEST_SCOREBOARD
+>
+
 // https://github.com/Spasman/rcon_example/tree/master?tab=readme-ov-file#sending-requests-and-processing-request_data
 /** Triggered when an RCON client makes a request. */
-type RequestData = DefaultEntries<typeof EventTypes.REQUEST_DATA> & {
-  /** The original request enum that was sent. */
-  CaseID: RequestType
-  /** Unique ID of the original request, used for identification. */
+type RequestDataDefaultEntries<CaseID extends SpecialRequestDataType> = DefaultEntries<
+  typeof EventTypes.REQUEST_DATA
+> & {
+  /** The type of request sent to the server */
+  CaseID: CaseID
+  /** Can be used to tie it with the initial request sent to the server */
   RequestID: string
+}
+
+/**
+ * Response returned by the server to `request_player` request. Contains info about a specific player.
+ *
+ * Need verification with server response when current bug is fixed.
+ * Current knonwn bug: request_data are received by the game server but the server doesn't send a response.
+ *
+ * The doc is not clear what happens if the player is not found on the server. It says:
+ * "You should get a request_data RCON event that contains the PlayerData# JSON you need. You won't get anything if the player wasn't found."
+ * Not clear whether no response is returned at all OR the `PlayerData` field is not in the response.
+ */
+/** */
+type RequestPlayer = RequestDataDefaultEntries<typeof RequestTypes.REQUEST_PLAYER> & {
+  /** Data of the requested player */
+  PlayerData?: PlayerData
+}
+
+/**
+ * Response sent by the server. Can only be triggered via the `rcon` command entered in console window of the server.
+ *
+ * This request can't be sent to the server via RCON.
+ */
+type RequestBounce = RequestDataDefaultEntries<typeof RequestTypes.REQUEST_BOUNCE> & {
+  String: string
+}
+
+/** Response returned by the server to `request_match` request. Contains info about the match. */
+type RequestMatch = RequestDataDefaultEntries<typeof RequestTypes.REQUEST_MATCH> & {
+  /** Name of the server */
+  ServerName: string
+  /** The name of the game mode the server is currently running */
+  GamemodeName: string
+  /** The ID of the game mode the server is currently running */
+  GamemodeID: Gamemode
+  /** The name of the map the server is currently running */
+  Map: string
+  /** How many players are currently connected */
+  Players: number
+  /** The maximum amount of players allowed on the server */
+  MaxPlayers: number
+  /** How many 'ticks' are left in the time */
+  TimeLeft: number
+  /** The starting maximum amount of time the server is using, in 'ticks' */
+  MaxTime: number
+  /** A timestamp string of how much time is left */
+  TimeStr: string
+  /** "1" if the match is currently in overtime, "0" if not */
+  Overtime: boolean
+  /** The current version of the game the server is running */
+  Version: string
+  /** The maximum score needed to win the match, if available */
+  MaxScore: number
+  /** The current score of USC, if available */
+  Team1Score?: number
+  /** The current score of THE MAN, if available */
+  Team2Score?: number
+}
+
+/** Response returned by the server to `request_scoreboard` request.
+ * Contains some info about the match and info about each player on the server.
+ */
+type RequestScoreboard = RequestDataDefaultEntries<typeof RequestTypes.REQUEST_SCOREBOARD> & {
+  /** Name of the server */
+  ServerName: string
+  /** The name of the game mode the server is currently running */
+  GamemodeName: string
+  /** The ID of the game mode the server is currently running */
+  GamemodeID: Gamemode
+  /** The name of the map the server is currently running */
+  Map: string
+  /** A timestamp string of how much time is left */
+  TimeStr: string
+  /** The current score of USC, if available */
+  Team1Score?: number
+  /** The current score of The Man, if available */
+  Team2Score?: number
+  /**
+   * Additional JSON data for each player, matching rcon_receive.request_player format.
+   *
+   * This is a list in refined events cuz it's easier to deal with.
+   */
+  PlayersDatas: PlayerData[]
 }
 
 /** Triggered when a command is entered into the console. */
@@ -941,7 +1039,10 @@ export type RconEvent =
   | SurvivalWaveBegins
   | SurvivalBuyChest
   | LogMessage
-  | RequestData
+  | RequestPlayer
+  | RequestBounce
+  | RequestMatch
+  | RequestScoreboard
   | CommandEntered
   | RconLoggedIn
   | MatchPaused
@@ -984,6 +1085,16 @@ function refineOgDefaultEntries<E extends EventType>(og: OgDefaultEntries<E>): D
   }
 }
 
+function refineOgRequestDataDefaultEntires<R extends SpecialRequestDataType>(
+  og: OgRequestDataDefaultEntries<R>
+): RequestDataDefaultEntries<R> {
+  return {
+    ...refineOgDefaultEntries(og),
+    CaseID: Number(og.CaseID) as R,
+    RequestID: og.RequestID
+  }
+}
+
 function parseProfile(profile: string): ProfileInfo {
   const parsed = JSON.parse(profile)
   return {
@@ -1002,6 +1113,11 @@ const ogEventTypes = Object.fromEntries(
   Object.entries(EventTypes).map(([keyof, val]) => [keyof, String(val)])
 ) as { [K in keyof typeof EventTypes]: `${(typeof EventTypes)[K]}` }
 
+// same deal with `Number(og.CaseID)` when the response is related to a request made from RCON
+const ogRequestTypes = Object.fromEntries(
+  Object.entries(RequestTypes).map(([keyof, val]) => [keyof, String(val)])
+) as { [K in keyof typeof RequestTypes]: `${(typeof RequestTypes)[K]}` }
+
 function parseNumber<T>(value: string): T {
   return Number(value) as T
 }
@@ -1017,6 +1133,32 @@ function parsePlayerIdAndProfile(og: { PlayerID: string; Profile: string }): {
   return {
     PlayerID: parseNumber(og.PlayerID),
     Profile: parseProfile(og.Profile)
+  }
+}
+
+function parsePlayerData(data: OgPlayerData): PlayerData {
+  return {
+    ID: parseNumber(data.ID),
+    Name: data.Name,
+    Color: data.Color,
+    Team: parseNumber(data.Team),
+    Kills: parseNumber(data.Kills),
+    Deaths: parseNumber(data.Deaths),
+    Assists: parseNumber(data.Assists),
+    Score: parseNumber(data.Score),
+    ProfileID: data.Profile,
+    Store: parseNumber(data.Store),
+    WeaponsDealRank: data.WeaponsDealRank ? parseNumber(data.WeaponsDealRank) : undefined,
+    Alive: parseBoolean(data.Alive),
+    Bot: parseBoolean(data.Bot),
+    Hat: parseNumber(data.Hat),
+    Money: parseNumber(data.Money),
+    RespawnCost: parseNumber(data.RespawnCost),
+    Premium: parseBoolean(data.Premium),
+    X: parseNumber(data.X),
+    Y: parseNumber(data.Y),
+    ClanID: data.ClanID,
+    ClanTag: data.ClanTag
   }
 }
 
@@ -1289,31 +1431,7 @@ export class EventRefinedTransformer {
           if (key.startsWith('PlayerData')) {
             const data = og[key as `PlayerData${number}`]
             if (data) {
-              datas.push({
-                ID: parseNumber(data.ID),
-                Name: data.Name,
-                Color: data.Color,
-                Team: parseNumber(data.Team),
-                Kills: parseNumber(data.Kills),
-                Deaths: parseNumber(data.Deaths),
-                Assists: parseNumber(data.Assists),
-                Score: parseNumber(data.Score),
-                ProfileID: data.Profile,
-                Store: parseNumber(data.Store),
-                WeaponsDealRank: data.WeaponsDealRank
-                  ? parseNumber(data.WeaponsDealRank)
-                  : undefined,
-                Alive: parseBoolean(data.Alive),
-                Bot: parseBoolean(data.Bot),
-                Hat: parseNumber(data.Hat),
-                Money: parseNumber(data.Money),
-                RespawnCost: parseNumber(data.RespawnCost),
-                Premium: parseBoolean(data.Premium),
-                X: parseNumber(data.X),
-                Y: parseNumber(data.Y),
-                ClanID: data.ClanID,
-                ClanTag: data.ClanTag
-              })
+              datas.push(parsePlayerData(data))
             }
           }
         }
@@ -1379,7 +1497,74 @@ export class EventRefinedTransformer {
         } satisfies LogMessage
       }
       case ogEventTypes.REQUEST_DATA: {
-        return { ...refineOgDefaultEntries(og) } satisfies RequestData
+        switch (og.CaseID) {
+          case ogRequestTypes.REQUEST_PLAYER: {
+            let player: PlayerData | undefined = undefined
+
+            for (const key in og) {
+              if (key.startsWith('PlayerData')) {
+                const data = og[key as `PlayerData${number}`]
+                if (data) {
+                  player = parsePlayerData(data)
+                }
+              }
+            }
+            return {
+              ...refineOgRequestDataDefaultEntires(og),
+              PlayerData: player
+            } satisfies RequestPlayer
+          }
+          case ogRequestTypes.REQUEST_BOUNCE: {
+            return {
+              ...refineOgRequestDataDefaultEntires(og),
+              String: og.String
+            } satisfies RequestBounce
+          }
+          case ogRequestTypes.REQUEST_MATCH: {
+            return {
+              ...refineOgRequestDataDefaultEntires(og),
+              ServerName: og.ServerName,
+              GamemodeName: og.GamemodeName,
+              GamemodeID: parseNumber(og.GamemodeID),
+              Map: og.Map,
+              Players: parseNumber(og.Players),
+              MaxPlayers: parseNumber(og.MaxPlayers),
+              TimeLeft: parseNumber(og.TimeLeft),
+              MaxTime: parseNumber(og.MaxTime),
+              TimeStr: og.TimeStr,
+              Overtime: parseBoolean(og.Overtime),
+              Version: og.Version,
+              MaxScore: parseNumber(og.MaxScore),
+              Team1Score: og.Team1Score ? parseNumber(og.Team1Score) : undefined,
+              Team2Score: og.Team2Score ? parseNumber(og.Team2Score) : undefined
+            } satisfies RequestMatch
+          }
+
+          case ogRequestTypes.REQUEST_SCOREBOARD: {
+            const datas: PlayerData[] = []
+
+            for (const key in og) {
+              if (key.startsWith('PlayerData')) {
+                const data = og[key as `PlayerData${number}`]
+                if (data) {
+                  datas.push(parsePlayerData(data))
+                }
+              }
+            }
+
+            return {
+              ...refineOgRequestDataDefaultEntires(og),
+              ServerName: og.ServerName,
+              GamemodeName: og.GamemodeName,
+              GamemodeID: parseNumber(og.GamemodeID),
+              Map: og.Map,
+              TimeStr: og.TimeStr,
+              Team1Score: og.Team1Score ? parseNumber(og.Team1Score) : undefined,
+              Team2Score: og.Team2Score ? parseNumber(og.Team2Score) : undefined,
+              PlayersDatas: datas
+            } satisfies RequestScoreboard
+          }
+        }
       }
       case ogEventTypes.COMMAND_ENTERED: {
         return {

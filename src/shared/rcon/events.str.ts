@@ -9,7 +9,7 @@
  * Note: `Profile` is also kept as a string for sake of simplicity.
  */
 
-import { EventTypes, type EventType } from './types/packet'
+import { EventTypes, type RequestType, RequestTypes, type EventType } from './types/packet'
 
 export type OgDefaultEntries<EventId extends EventType> = {
   /** Unique id added after receiving the packet. */
@@ -18,6 +18,24 @@ export type OgDefaultEntries<EventId extends EventType> = {
   Time: string
   /** The enum ID of the RCON event. */
   EventID: `${EventId}`
+}
+
+type SpecialRequestDataType = Extract<
+  RequestType,
+  | typeof RequestTypes.REQUEST_BOUNCE
+  | typeof RequestTypes.REQUEST_MATCH
+  | typeof RequestTypes.REQUEST_PLAYER
+  | typeof RequestTypes.REQUEST_SCOREBOARD
+>
+
+/** Triggered when an RCON client makes a request. */
+export type OgRequestDataDefaultEntries<CaseId extends SpecialRequestDataType> = OgDefaultEntries<
+  typeof EventTypes.REQUEST_DATA
+> & {
+  /** The type of request sent to the server */
+  CaseID: `${CaseId}`
+  /** Can be used to tie it with the initial request sent to the server */
+  RequestID: string
 }
 
 /** Data for Takeover flag spawned */
@@ -31,7 +49,7 @@ type FlagData = {
 }
 
 /** Data for a player */
-type PlayerData = {
+export type OgPlayerData = {
   /** The ID of the player in the server. Also the number listed after root PlayerData key */
   ID: string
   /** The name of the player. */
@@ -486,7 +504,7 @@ type MatchEnd = OgDefaultEntries<typeof EventTypes.MATCH_END> & {
   /** Name of the next map, if found; otherwise, falls back to the file name. */
   NextMap: string
   /** Additional JSON data for each player, matching rcon_receive.request_player format. */
-  [K: `PlayerData${number}`]: PlayerData | undefined
+  [K: `PlayerData${number}`]: OgPlayerData | undefined
 }
 
 /** Triggers when the match enters overtime. */
@@ -550,12 +568,83 @@ type LogMessage = OgDefaultEntries<typeof EventTypes.LOG_MESSAGE> & {
   Color: string
 }
 
-/** Triggered when an RCON client makes a request. */
-type RequestData = OgDefaultEntries<typeof EventTypes.REQUEST_DATA> & {
-  /** The original request enum that was sent. */
-  CaseID: string
-  /** Unique ID of the original request, used for identification. */
-  RequestID: string
+/**
+ * Response returned by the server to `request_player` request. Contains info about a specific player.
+ *
+ * Need verification with server response when current bug is fixed.
+ * Current knonwn bug: request_data are received by the game server but the server doesn't send a response.
+ */
+/** */
+type RequestPlayer = OgRequestDataDefaultEntries<typeof RequestTypes.REQUEST_PLAYER> & {
+  /** Data of the requested player */
+  [K: `PlayerData${number}`]: OgPlayerData
+}
+
+/**
+ * Response sent by the server. Can only be triggered via the `rcon` command entered in console window of the server.
+ *
+ * This request can't be sent to the server via RCON.
+ */
+type RequestBounce = OgRequestDataDefaultEntries<typeof RequestTypes.REQUEST_BOUNCE> & {
+  String: string
+}
+
+/** Response returned by the server to `request_match` request. Contains info about the match. */
+type RequestMatch = OgRequestDataDefaultEntries<typeof RequestTypes.REQUEST_MATCH> & {
+  /** Name of the server */
+  ServerName: string
+  /** The name of the game mode the server is currently running */
+  GamemodeName: string
+  /** The ID of the game mode the server is currently running */
+  GamemodeID: string
+  /** The name of the map the server is currently running */
+  Map: string
+  /** How many players are currently connected */
+  Players: string
+  /** The maximum amount of players allowed on the server */
+  MaxPlayers: string
+  /** How many 'ticks' are left in the time */
+  TimeLeft: string
+  /** The starting maximum amount of time the server is using, in 'ticks' */
+  MaxTime: string
+  /** A timestamp string of how much time is left */
+  TimeStr: string
+  /** "1" if the match is currently in overtime, "0" if not */
+  Overtime: string
+  /** The current version of the game the server is running */
+  Version: string
+  /** The maximum score needed to win the match, if available */
+  MaxScore: string
+  /** The current score of USC, if available */
+  Team1Score?: string
+  /** The current score of THE MAN, if available */
+  Team2Score?: string
+}
+
+/** Response returned by the server to `request_scoreboard` request.
+ * Contains some info about the match and info about each player on the server.
+ */
+type RequestScoreboard = OgRequestDataDefaultEntries<typeof RequestTypes.REQUEST_SCOREBOARD> & {
+  /** Name of the server */
+  ServerName: string
+  /** The name of the game mode the server is currently running */
+  GamemodeName: string
+  /** The ID of the game mode the server is currently running */
+  GamemodeID: string
+  /** The name of the map the server is currently running */
+  Map: string
+  /** A timestamp string of how much time is left */
+  TimeStr: string
+  /** The current score of USC, if available */
+  Team1Score?: string
+  /** The current score of The Man, if available */
+  Team2Score?: string
+  /**
+   * Additional JSON data for each player, matching rcon_receive.request_player format.
+   *
+   * This is a list in refined events cuz it's easier to deal with.
+   */
+  [K: `PlayerData${number}`]: OgPlayerData
 }
 
 /** Triggered when a command is entered into the console. */
@@ -919,7 +1008,10 @@ export type OgRconEvent =
   | SurvivalWaveBegins
   | SurvivalBuyChest
   | LogMessage
-  | RequestData
+  | RequestPlayer
+  | RequestBounce
+  | RequestMatch
+  | RequestScoreboard
   | CommandEntered
   | RconLoggedIn
   | MatchPaused
