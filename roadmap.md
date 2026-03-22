@@ -40,3 +40,23 @@ As ingame, typing out a command should provide autocomplete suggestions.
 ### Naming
 
 Could be called "Console"?
+
+# TODO
+
+WIP: console with colored log message
+
+- transform enums to const
+
+events.refined.ts:
+
+- add typeguard to check for a specific type of rcon event (can be used in react components)
+
+## Architecture
+
+Will do in order:
+
+1. webapp + api
+2. cli
+3. desktop app
+
+so for now the desktop app is in pause.
