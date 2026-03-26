@@ -156,6 +156,22 @@ importers:
         specifier: ^5
         version: 5.9.3
 
+  packages/types:
+    dependencies:
+      '@boringflux/utils':
+        specifier: workspace:*
+        version: link:../utils
+    devDependencies:
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+
+  packages/utils:
+    devDependencies:
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+
 packages:
 
   '@angular-devkit/core@19.2.17':
